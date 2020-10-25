@@ -115,6 +115,26 @@ Trochę jak w assemblerze.
 
 ---
 
+<Tree diagram>
+
+---
+
+<Tree predicate>
+
+---
+
+<Bad proof of deletetree using pure Hoare logic.>
+
+---
+
+<Counterexample tree>
+
+---
+
+<How to fix this? By asserting which parts of the predicate operate on which parts of memory. That's what separation logic is all about>
+
+---
+
 $$
 \frac{\{P\} C\{Q\} \quad\left\{P^{\prime}\right\} C^{\prime}\left\{Q^{\prime}\right\}}{\left\{P * P^{\prime}\right\} C \| C^{\prime}\left\{Q * Q^{\prime}\right\}}
 $$

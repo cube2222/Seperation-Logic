@@ -115,23 +115,106 @@ Trochę jak w assemblerze.
 
 ---
 
-<Tree diagram>
+# Tree Example
+
+![inline 125%](tree_example.png)
+
+^ Spójrzmy teraz na drzewo, troszkę bardziej złożoną od listy strukturę wskaźnikową.
 
 ---
 
-<Tree predicate>
+# Tree Example
+
+$$
+\begin{aligned}
+& \operatorname{tree}(v, \tau_{1}, \tau_{2})(a) \operatorname{iff} \\
+& \text{ }\text{ } [a] = v \wedge \operatorname{tree}\tau_{1}(a+1) \wedge \operatorname{tree}\tau_{2}(a+2) \\
+& \operatorname{tree}(\bot)(a) \operatorname{iff} \\
+& \text{ }\text{ } a = -1 \\
+\end{aligned}
+$$
+
+^ Ale co to znaczy "być drzewem"? Pomóc może tutaj oczywiście lektura "Sekretne życie drzew", ale w skrócie:
 
 ---
+
+# Tree Example
+
+<Bad proof sketch of deletetree using pure Hoare logic.>
+
+$$
+\begin{aligned}
+& \{ \mathbf{emp} \} \\
+& x = \operatorname{cons}(1) \\
+& \{ x \mapsto 1 \} \\
+& y = \operatorname{cons}(2, 3) \\
+& \{ x \mapsto 1 \wedge y \mapsto 2 \wedge y + 1 \mapsto 3 \} \\
+& \{ x \mapsto 1 \wedge y \mapsto 2, 3 \} \\
+& \{ x \mapsto - \wedge y \mapsto 2, 3 \} \\
+& \operatorname{dispose} x \\
+& \{ y \mapsto 2, 3 \} \\
+& \operatorname{dispose} y \\
+& \{ \mathbf{emp} \} \\
+\end{aligned}
+$$
+
+---
+
+# Adding Heap-related Predicates - Assertions
+
+$$
+\begin{aligned}
+&\langle\text { assert }\rangle::=\cdots\\
+&\mid \mathbf{emp} & \text { empty heap } \\
+&\mid\langle\exp \rangle \mapsto\langle\exp \rangle & \text { singleton heap } \\
+\end{aligned}
+$$
+
+^ Wprowadźmy też predykaty operujące na stanie Heapu, tzw. asercje.
+
+---
+
+# Adding Heap-related Predicates - Assertions
+
+$$
+\begin{aligned}
+& \{ \mathbf{emp} \} \\
+& x = \operatorname{cons}(1) \\
+& \{ x \mapsto 1 \} \\
+& y = \operatorname{cons}(2, 3) \\
+& \{ x \mapsto 1 \wedge y \mapsto 2 \wedge y + 1 \mapsto 3 \} \\
+& \{ x \mapsto 1 \wedge y \mapsto 2, 3 \} \\
+& \{ x \mapsto - \wedge y \mapsto 2, 3 \} \\
+& \operatorname{dispose} x \\
+& \{ y \mapsto 2, 3 \} \\
+& \operatorname{dispose} y \\
+& \{ \mathbf{emp} \} \\
+\end{aligned}
+$$
+
+---
+
+# Tree Example
 
 <Bad proof of deletetree using pure Hoare logic.>
 
 ---
 
-<Counterexample tree>
+# Tree Example
+
+<Counterexample tree, we'd like to assert that the tree isn't malformed like that.>
 
 ---
 
-<How to fix this? By asserting which parts of the predicate operate on which parts of memory. That's what separation logic is all about>
+# Tree Example
+
+<Intro with simple examples of logic extensions. Ownership and seperating conjunction.>
+
+---
+
+# Tree Example
+
+<Back to the tree example. How to fix this? By asserting which parts of the predicate operate on which parts of memory. That's what separation logic is all about>
 
 ---
 

@@ -275,17 +275,66 @@ $$
 
 ---
 
-# Tree Example
+# Tree Counterexample
 
-<Counterexample tree, we'd like to assert that the tree isn't malformed like that.>
+![inline 125%](tree_counterexample.png)
 
 ^ Otóż nigdzie nie sprawdzamy ani nie obsługujemy sytuacji, w której różne gałęzie drzewa wskazują na te same miejsca w Heapie.
+Śmiało zrobimy double free.
+Nigdzie nie rozgraniczamy pamięci, więc różne części naszych predukatów mogą operować na tej samej pamięci.
 
 ---
 
-# Tree Example
+# Assertions - continued
 
-<Intro with simple examples of logic extensions. Ownership and seperating conjunction.>
+$$
+\begin{aligned}
+&\langle\text { assert }\rangle::=\cdots\\
+&\mid \mathbf{emp} & \text { empty heap } \\
+&\mid\langle\exp \rangle \mapsto\langle\exp \rangle & \text { singleton heap } \\
+&\mid\langle\text{assert}\rangle * \langle\text{assert}\rangle & \text { separating conjunction } \\
+\end{aligned}
+$$
+
+^ Wobec tego musimy dodać kolejne asercje, które są główną ideą i głębszym sensem Separation Logic.
+Idea jest taka, że asercje oddzielona separating conjunction opisują różne elementy pamięci.
+Idei ciąg dalszy jest taki, że każdy fragment oddzielony przez seperating conjunction w pewnym sensie "posiada" assertowane adresy.
+
+---
+
+# Seperating Conjunction - Example
+
+![inline 125%](separating_conjunction_example_1.png)
+
+$$
+x \mapsto 3, y
+$$
+
+^ x wskazuje na rekord 3, y. Wyrażenie to posiada x'a.
+
+---
+
+# Seperating Conjunction - Example
+
+![inline 125%](separating_conjunction_example_2.png)
+
+$$
+x \mapsto 3, y * y \mapsto 3, x
+$$
+
+^ x wskazuje na rekord 3, y. y na rekord 3, x. To działa dlatego bo posiadany jest adres po lewej, a całość się nie rozchodzi dalej.
+
+---
+
+# Seperating Conjunction - WRONG Example
+
+![inline 125%](separating_conjunction_example_3.png)
+
+$$
+x \mapsto 3, z * y \mapsto 3, z
+$$
+
+^ Nie działa, mamy dwie asercje rozdzielone separating conjunction operujące na tym samym adresie.
 
 ---
 

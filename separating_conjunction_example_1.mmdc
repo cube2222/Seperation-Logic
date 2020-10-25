@@ -1,0 +1,7 @@
+graph TB
+    variable("x")
+    subgraph node 1
+    v1["3"]
+    t1["y"]
+    end
+    variable-->v1

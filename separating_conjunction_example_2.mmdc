@@ -1,0 +1,11 @@
+graph TB
+    subgraph node 1
+    v1["3"]
+    t1["x"]
+    end
+    subgraph node 2
+    v2["3"]
+    t2["y"]
+    end
+    t2-->v1
+    t1-->v2

@@ -1,0 +1,21 @@
+graph TB
+    subgraph Store
+    x("x = 42")
+    y("y = 32")
+    variable("my_amazin_list = a")
+    end
+    subgraph node 1
+    v1["[a] = value"]
+    t1["[a+1] = b"]
+    end
+    subgraph node 2
+    v2["[b] = value"]
+    t2["[b+1] = c"]
+    end
+    subgraph node 3
+    v3["[c] = value"]
+    t3["[c+1] = 1"]
+    end
+    variable-->v1
+    t1-->v2
+    t2-->v3

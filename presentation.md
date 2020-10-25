@@ -112,6 +112,7 @@ $$
 ^ Rozszczerzymy też nasz język o potrzebne konstrukty. tzw. Komendy.
 Tu warto zwrócić uwagę, że albo odczytujemy, albo zapisujemy do pamięci, nie możemy zrobić przepisania z pamięci do pamięci.
 Trochę jak w assemblerze.
+I tak samo jak w prawdziwych komputerach, double free prowadzi do segfaulta.
 
 ---
 
@@ -140,23 +141,23 @@ $$
 
 # Tree Example
 
-<Bad proof sketch of deletetree using pure Hoare logic.>
-
 $$
 \begin{aligned}
-& \{ \mathbf{emp} \} \\
-& x = \operatorname{cons}(1) \\
-& \{ x \mapsto 1 \} \\
-& y = \operatorname{cons}(2, 3) \\
-& \{ x \mapsto 1 \wedge y \mapsto 2 \wedge y + 1 \mapsto 3 \} \\
-& \{ x \mapsto 1 \wedge y \mapsto 2, 3 \} \\
-& \{ x \mapsto - \wedge y \mapsto 2, 3 \} \\
-& \operatorname{dispose} x \\
-& \{ y \mapsto 2, 3 \} \\
-& \operatorname{dispose} y \\
-& \{ \mathbf{emp} \} \\
+& \{ \mathbf{true} \} \\
+& \text{left} = \operatorname{cons}(42, -1, -1) \\
+& \{ \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
+& \text{right} = \operatorname{cons}(47, -1, -1) \\
+& \{ \operatorname{tree}(47, \bot, \bot)(\text{right}) \} \\
+& \text{root} = \operatorname{cons}(32, \text{left}, \text{right}) \\
+& \{ \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \} \\
+& \operatorname{deletetree}(\text{root}) \\
+& \{ ??? \} \\
 \end{aligned}
 $$
+
+^ To zobaczmy sobie teraz przykład konstrukcji i użycia.
+Tu mamy problem.
+Nie mamy jak dać warunku na skuteczne usunięcie drzewa...
 
 ---
 
@@ -194,15 +195,91 @@ $$
 
 ---
 
-# Tree Example
+# Back to the Tree Example
 
-<Bad proof of deletetree using pure Hoare logic.>
+$$
+\begin{aligned}
+& \{ \mathbf{true} \} \\
+& \text{left} = \operatorname{cons}(42, -1, -1) \\
+& \{ \text{left} \mapsto 42, -1, -1 \wedge \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
+& \text{right} = \operatorname{cons}(47, -1, -1) \\
+& \{ \text{right} \mapsto 47, -1, -1 \wedge \operatorname{tree}(47, \bot, \bot)(\text{right}) \wedge \text{left} \mapsto 42, -1, -1 \wedge \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \} \\
+& \text{root} = \operatorname{cons}(32, \text{left}, \text{right}) \\
+& \{ \text{right} \mapsto 32, \text{left}, \text{right} \wedge \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \wedge \text{right} \mapsto 47, -1, -1 \wedge \operatorname{tree}(47, \bot, \bot)(\text{right}) \wedge \text{left} \mapsto 42, -1, -1 \wedge \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
+& \{ \text{right} \mapsto 32, \text{left}, \text{right} \wedge \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \wedge \text{right} \mapsto 47, -1, -1 \wedge \text{left} \mapsto 42, -1, -1 \} \\
+& \operatorname{deletetree}(\text{root}) \\
+& \{ \mathbf{emp} \} \\
+\end{aligned}
+$$
+
+^ Dobra, teraz poszło w miarę gładko, chociaż trochę się tych asercji narobiło.
+Przejdźmy teraz głębiej, do implementacji deletetree.
+
+---
+
+# Tree Example - Better Description
+
+$$
+\begin{aligned}
+& \operatorname{tree}(v, \tau_{1}, \tau_{2})(a) \operatorname{iff} \\
+& \text{ }\text{ } \exists_{v, t_1, t_2} a \mapsto v, t_1, t_2 \wedge \operatorname{tree}\tau_{1}t_1 \wedge \operatorname{tree}\tau_{2}t_2 \\
+& \operatorname{tree}(\bot)(a) \operatorname{iff} \\
+& \text{ }\text{ } a = -1 \\
+\end{aligned}
+$$
+
+^ Musieliśmy obok asercji o byciu drzewem pisać też asercje o pamięci, to nas od tego uwolni.
+
+---
+
+# Tree Example - Implementation
+
+$$
+\begin{aligned}
+& \{ \operatorname{tree}(\tau)(a)\} \\
+& \operatorname{procedure} \mathrm{deletetree}(a) \\ 
+& \operatorname{if} a \neq -1 \operatorname{then} \\
+& \text{ }\text{ } \operatorname{deletetree}([a+1]) \\
+& \text{ }\text{ } \operatorname{deletetree}([a+2]) \\
+& \text{ }\text{ } \operatorname{dispose} a \\
+& \{ \mathbf{emp} \} \\
+\end{aligned}
+$$
+
+
+^ Wygląda sensownie. Przechodząc do głębszego dowodu.
+
+---
+
+# Tree Example - Implementation
+
+$$
+\begin{aligned}
+& \{ \operatorname{\operatorname{tree}}(\tau)(a) \} \\
+& \operatorname{procedure} \mathrm{deletetree}(a) \\ 
+& \operatorname{if} a \neq -1 \operatorname{then} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \operatorname{tree}(x, \tau_1, \tau_2)(a) \} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge \operatorname{tree}(\tau_1)(t_1) \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \operatorname{deletetree}([a+1]) \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge t_1 = -1 \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \operatorname{deletetree}([a+2]) \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge t_1 = -1 \wedge t_2 = -1 \} \\
+& \text{ }\text{ } \operatorname{dispose} a \\
+& \text{ }\text{ } \{ \mathbf{emp} \} \\
+& \{ \mathbf{emp} \} \\
+\end{aligned}
+$$
+
+
+^ Pysznie. Jedyny problem - jest źle.
 
 ---
 
 # Tree Example
 
 <Counterexample tree, we'd like to assert that the tree isn't malformed like that.>
+
+^ Otóż nigdzie nie sprawdzamy ani nie obsługujemy sytuacji, w której różne gałęzie drzewa wskazują na te same miejsca w Heapie.
 
 ---
 

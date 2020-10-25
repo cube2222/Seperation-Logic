@@ -14,7 +14,7 @@ graph TB
     end
     subgraph node 3
     v3["[c] = value"]
-    t3["[c+1] = 1"]
+    t3["[c+1] = -1"]
     end
     variable-->v1
     t1-->v2

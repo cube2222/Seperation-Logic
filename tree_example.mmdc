@@ -1,0 +1,24 @@
+graph TB
+    subgraph Store
+    x("x = 42")
+    y("y = 32")
+    variable("my_amazin_tree = a")
+    end
+    subgraph root
+    v["[a] = value"]
+    l["[a+1] = b"]
+    r["[a+2] = c"]
+    end
+    subgraph nodel
+    bv["[b] = value"]
+    bl["[b+1] = bb"]
+    br["[b+2] = bc"]
+    end
+    subgraph noder
+    cv["[c] = value"]
+    cl["[c+1] = cb"]
+    cr["[c+2] = cc"]
+    end
+    variable-->v
+    l-->bv
+    r-->cv

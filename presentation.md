@@ -62,7 +62,7 @@ Dowód, właśnie tego rodzaju, pozwala mi potwierdzić na 100%, że dany progra
 
 # Adding the Heap
 
-![inline 100%](linked_list.png)
+![inline 80%](linked_list.png)
 
 ---
 
@@ -428,6 +428,118 @@ $$
 ---
 
 # Separation Logic in Concurrency
+
+^ Teraz przejdźmy do części za którą dana została nagroda. Części dotyczącej programów współbieżnych.
+A mianowicie problemem w programach współbieżnych jest at its core synchronizacja dostępów do zasobów, np. pamięci.
+Separation Logic się tu nasuwa idealnie, jako mechanizm pozwalający nam udowadniać z wzglądem na podział pamięci (zasobów) między procesy.
+Taki kierunek badań był wręcz przez Raynoldsa zasugerowany w oryginalnym papierze o Separation Logic.
+Ale dopiero O'Hearn i Brookes kilka lat później przedstawili siostrzane papiery opisujące to bliżej.
+
+---
+
+# Basic Principles
+
+^ Postawmy teraz na początek trochę fundamentów.
+
+---
+
+# Basic Principles - Raciness
+
+A program is racy if two concurrent processes attempt to access the same portion of state at the same time.
+
+Otherwise the program is race-free.
+
+Example of a racy program:
+
+$$
+x:=y+x \| x:=x \times z
+$$
+
+^ Tu widzimy przykład użycia operatora podwójnej pałki. Rozdziela on dwa równocześnie działające procesy.
+
+---
+
+# Basic Principles - Raciness
+
+Statements which differ in their meaning in a racy program:
+
+$$
+x:=x+1; x:=x+1
+$$
+
+-
+
+$$
+x:=x+2
+$$
+
+^ Jak program jest bez race'ów to nie musimy przejmować się interferencją innych procesów w nasze działanie.
+Inaczej musimy się przejmować drobnymi detalami, jak np. wciśnięcie się kogoś między dwie plus jedynki.
+
+---
+
+# Basic Principles - Mutual Exclusion Groups
+
+A “mutual exclusion group” is a class of commands whose elements (or their occurrences) are required not to overlap in their executions.
+
+$$
+P(s); x:=y+x; V(s) \| P(s); x:=x \times z; V(s)
+$$
+
+^ Możemy więc łączyć sekwencje komend z różnych procesów w grupy wzajemnego wykluczenia.
+Tu przypomnienie, że P to złapanie semafory, a V zwolnienie go.
+Technicznie rzecz biorąc, jeśli s > 0, to P zmniejsza s o 1, w przeciwnym wypadku czeka.
+V zwiększa s o jeden.
+Tu przykład zrealizowania mutual exlusion groups używając semaforów.
+
+---
+
+# Basic Principles - Mutual Exclusion Groups
+
+$$
+\begin{aligned}
+& \operatorname{with} r \operatorname{when} B \operatorname{do} C \\
+& r - Resource \\
+& B - Boolean \\
+& C - Command \\
+\end{aligned}
+$$
+
+^ My oprzemy się głównie na innym prymitywie synchronizacji, bloku with-when-do.
+Z których tylko jeden jednocześnie może mieć with'a na danym resoursie, i tylko wtedy kiedy B jest spełnione.
+
+---
+
+# Basic Principles - Daringness
+
+A program is cautious if, whenever concurrent processes access the same piece of state, they do so only within commands from the same mutual exclusion group. Otherwise, the program is daring.
+
+^ Już ostatnia sucha definicja.
+Tu warto zaznaczyć różnicę między racy a daring. 
+Racy program faktycznie używa danych zmiennych z wielu procesów jednocześnie.
+Daring program używa danych zmiennych z wielu procesów bez używania grup wzajemnego wykluczenia, ale robi to w sposób zdefiniowany, nie jednoczesny.
+
+---
+
+# Basic Principles - Daringness
+
+$$
+\begin{aligned}
+& \operatorname{\mathbf{semaphore}} free := 1 ; busy := 0 \\
+& \begin{aligned}
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& [10] := m; & \| & & & n := [10]; \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Warto też zwrócić uwage, że nie jest łatwo wykryć np. kompilatorem co jest grupą wzajemnego wykluczenia,
+bo np. P i V na różnych semaforach nie muszą tworzyć bloków, tak jak wcześniej.
+Ten program jest daring, chociaż synchronizuje (wysyła sobie wiadomości) semaforami.
+My będziemy chcieli mieć możliwość dowodzenia poprawności programów, które są darind.
+Tj. takich jak ten.
+Opisz co robi program. (może być w while'u)
 
 ---
 

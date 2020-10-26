@@ -261,9 +261,9 @@ $$
 & \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \operatorname{tree}(x, \tau_1, \tau_2)(a) \} \\
 & \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge \operatorname{tree}(\tau_1)(t_1) \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
 & \text{ }\text{ } \operatorname{deletetree}([a+1]) \\
-& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge t_1 = -1 \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
 & \text{ }\text{ } \operatorname{deletetree}([a+2]) \\
-& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge t_1 = -1 \wedge t_2 = -1 \} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \} \\
 & \text{ }\text{ } \operatorname{dispose} a \\
 & \text{ }\text{ } \{ \mathbf{emp} \} \\
 & \{ \mathbf{emp} \} \\
@@ -338,9 +338,96 @@ $$
 
 ---
 
-# Tree Example
+# Back to the Tree Example
 
-<Back to the tree example. How to fix this? By asserting which parts of the predicate operate on which parts of memory. That's what separation logic is all about>
+^ Dobra, to wracając do drzewa. Jak to naprawić?
+Otóż możemy to naprawić zmieniając definicję drzewa, na taką, które rozdziela pamięć.
+
+---
+
+# Back to the Tree Example
+
+$$
+\begin{aligned}
+& \operatorname{tree}(v, \tau_{1}, \tau_{2})(a) \operatorname{iff} \\
+& \text{ }\text{ } \exists_{v, t_1, t_2} a \mapsto v, t_1, t_2 * \operatorname{tree}\tau_{1}t_1 * \operatorname{tree}\tau_{2}t_2 \\
+& \operatorname{tree}(\bot)(a) \operatorname{iff} \\
+& \text{ }\text{ } \mathbf{emp} \wedge a = -1 \\
+\end{aligned}
+$$
+
+^ Zastępujemy koniunkcję przez Seperating Conjunction. I to pokazuje całą ideę Separation Logic.
+Rozdzielamy asercje tak żeby operowały na różnych elementach pamięci.
+Tu warto sobie uświadomić, że (tree tau t) rozwija się do asercji, która ma po lewych stronach strzałek wszystkie adresy wskazujące na węzły-dzieci, więc asertuje ich obecność.
+W przypadku braku czegokolwiek, zaznaczamy, że nie operujemy na żadnej pamięci, a nasze a jest null pointerem.
+
+---
+
+# Back to the Tree Example - Implementation
+
+$$
+\begin{aligned}
+& \{ \operatorname{\operatorname{tree}}(\tau)(a) \} \\
+& \operatorname{procedure} \mathrm{deletetree}(a) \\ 
+& \operatorname{if} a \neq -1 \operatorname{then} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \operatorname{tree}(x, \tau_1, \tau_2)(a) \} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 * \operatorname{tree}(\tau_1)(t_1) * \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \operatorname{deletetree}([a+1]) \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 * \mathbf{emp} * \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \operatorname{deletetree}([a+2]) \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 * \mathbf{emp} * \mathbf{emp} \} \\
+& \text{ }\text{ } \operatorname{dispose} a \\
+& \text{ }\text{ } \{ \mathbf{emp} * \mathbf{emp} * \mathbf{emp} \} \\
+& \{ \mathbf{emp} \} \\
+\end{aligned}
+$$
+
+^ W końcu możemy poprawnie udowodnić deletetree. Nasz wcześniejszy kontrprzykład nie może się wydarzyć, bo adres nie może być użyty w dwóch poddrzewach, jako że są one rozdzielone separating conjunction.
+
+---
+
+# Inference Rules
+
+^ W praktyce dostajemy też zestaw reguł wnioskowania których możemy używać podobnie do reguł wnioskowania w logice Hoara.
+Przejdźmy przez nie pokrótce, chociaż po szczegóły proszę zajrzeć sobie do papieru.
+
+---
+
+# Consequence
+
+$$
+\frac{\begin{aligned} & p^{\prime} \Rightarrow p & \{p\}c\{q\} & & q \Rightarrow q^{\prime} \end{aligned}}{\{p^{\prime}\} c \{q^{\prime}\}}
+$$
+
+^ Gdzie p, q to asercje, a c to komenda.
+
+---
+
+# Auxiliary Variable Elimination
+
+$$
+\frac{\{p\}c\{q\}}{\{\exists_{v} p\} c \{\exists_{v} q\}} v \notin \operatorname{FV}(c)
+$$
+
+---
+
+# Substitution
+
+$$
+\frac{\{p\} c\{q\}}{(\{p\} c\{q\}) / v_{1} \rightarrow e_{1}, \ldots, v_{n} \rightarrow e_{n}}
+$$
+when
+$$
+v_{1}, \ldots, v_{n} \in FV(p, c, q) \wedge \forall_i \operatorname{modified}_{c}(v_{i}) \implies \operatorname{variable}(e_{i}) \wedge \forall_{j \neq i} e_{i} \notin \operatorname{FV}(e_{j})
+$$
+
+---
+
+# End of Part 1
+
+---
+
+# Separation Logic in Concurrency
 
 ---
 

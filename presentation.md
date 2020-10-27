@@ -514,8 +514,7 @@ Z których tylko jeden jednocześnie może mieć with'a na danym resoursie, i ty
 
 A program is cautious if, whenever concurrent processes access the same piece of state, they do so only within commands from the same mutual exclusion group. Otherwise, the program is daring.
 
-^ Już ostatnia sucha definicja.
-Tu warto zaznaczyć różnicę między racy a daring. 
+^ Tu warto zaznaczyć różnicę między racy a daring. 
 Racy program faktycznie używa danych zmiennych z wielu procesów jednocześnie.
 Daring program używa danych zmiennych z wielu procesów bez używania grup wzajemnego wykluczenia, ale robi to w sposób zdefiniowany, nie jednoczesny.
 
@@ -540,6 +539,67 @@ Ten program jest daring, chociaż synchronizuje (wysyła sobie wiadomości) sema
 My będziemy chcieli mieć możliwość dowodzenia poprawności programów, które są darind.
 Tj. takich jak ten.
 Opisz co robi program. (może być w while'u)
+Inny dobry przykład to memory manager, któremu pamięć jest zwracana, ale pamiętamy wskaźnik do tej pamięci.
+
+---
+
+# Basic Principles - Ownership Hypothesis
+
+A code fragment can access only those portions of state that it owns.
+
+^ Kontynuując suche definicje.
+To jest dla jakiejś sensownej definicji ownershipu.
+W praktyce będziemy za to postrzegać ten fragment kodu, który ma adres po lewej stronie strzałeczki w asercji.
+
+---
+
+# Basic Principles - Separation Property
+
+At any time, the state can be partitioned into that owned by each process and each grouping of mutual exclusion.
+
+^ I już ostatnia definicja.
+Rozbijamy ten ownership między procesy i grupy wzajemnego wykluczenia. Czyli np. semafor może posiadać stan.
+
+---
+
+# A Simple Proof
+
+$$
+\begin{aligned}
+& \operatorname{\mathbf{semaphore}} free := 1 ; busy := 0 \\
+& \begin{aligned}
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& [10] := m; & \| & & & n := [10]; \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Wróćmy teraz do naszego programu przykładowego
+
+---
+
+# A Simple Proof - The Idea
+
+$$
+\begin{aligned}
+& \operatorname{\mathbf{semaphore}} free := 1 ; busy := 0 \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& [10] := m; & \| & & & n := [10]; \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Idea jest żeby ownership się układał w ten sposób.
+Wyciągamy ownership z semafory, zmieniamy i zwracamy do drugiej semafory.
+Z niej wyciąga to drugi proces i operuje na tym, ostatecznie zwracając do pierwszej.
+Tu warto zauważyć, że udowadniamy tylko bezpieczeństwo, nie pełną poprawność.
 
 ---
 

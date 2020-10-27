@@ -599,16 +599,33 @@ $$
 ^ Idea jest żeby ownership się układał w ten sposób.
 Wyciągamy ownership z semafory, zmieniamy i zwracamy do drugiej semafory.
 Z niej wyciąga to drugi proces i operuje na tym, ostatecznie zwracając do pierwszej.
+Adres 10 zawsze należy do jednego z: proces z lewej, semafora, proces z prawej.
 Tu warto zauważyć, że udowadniamy tylko bezpieczeństwo, nie pełną poprawność.
 
 ---
+
+# A Little Reminder
+
+$$
+P * Q
+$$
+
+and
+
+$$
+\{P\}[10] := 42\{Q\} \implies 10 \mapsto – * \operatorname{true}
+$$
+
+^ Małe przypomnienie.
+Pierwsze znaczy, że możemy rozdzielić Heap na dwie części, z których jedna spełnia P, a druga Q.
+W drugim ważne jest, że jeśli komenda modyfikuje adres 10, to P musi być implikować poprawność tego adresu, że jest on zaalokowany.
+
+---
+
+# Disjoint Concurrency Rule
 
 $$
 \frac{\{P\} C\{Q\} \quad\left\{P^{\prime}\right\} C^{\prime}\left\{Q^{\prime}\right\}}{\left\{P * P^{\prime}\right\} C \| C^{\prime}\left\{Q * Q^{\prime}\right\}}
 $$
 
----
-
-$$
-\frac{\{x \mapsto-\}[x]:=4\{x \mapsto 4\}}{\{x \mapsto-\wedge y \mapsto 3\}[x]:=4\{x \mapsto 4 \wedge y \mapsto 3\}}
-$$
+^ To ma sens. Oba, C i C' posiadają swoje adresy, więc operują na róznych. Także można je opisać separującą koniunkcją. 

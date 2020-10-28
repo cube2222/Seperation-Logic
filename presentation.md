@@ -689,3 +689,43 @@ $$
 & \{\operatorname{\textit{sorted}}(a, i, j)\} \\
 \end{aligned}
 $$
+
+^ Tu widzimy jak łądnie możemy rozdzielić te tablice, oddać je różnym funkcjom, i potem znów połączyć.
+
+---
+
+# Resources - Now Better
+
+$$
+\operatorname{\mathbf{with}} r \operatorname{\mathbf{when}} B \operatorname{\mathbf{do}} C \operatorname{\mathbf{endwith}}
+$$
+
+New Program Form:
+
+$$
+\begin{aligned}
+& init; \\
+& \operatorname{\mathbf{resource}} r_1(\text{variable list}), \dots, r_m(\text{variable list}) \\
+& C_1 \| \dots \| C_n \\
+\end{aligned}
+$$
+
+^ Mieliśmy wcześniej pewien konstrukt, resourcu, na którym oparliśmy semafory.
+Teraz dopakujemy te resourcy zmiennymi składowymi, i będziemy rozważać bardzo ustrukturyzowaną postać programu...
+
+---
+
+# Program - Proof Form
+
+$$
+\begin{aligned}
+& \{P\} \\
+& init; \\
+& \{P' * RI_{r_1} * \dots * RI_{r_m}\} \\
+& \operatorname{\mathbf{resource}} r_1(\text{variable list}), \dots, r_m(\text{variable list}) \\
+& C_1 \| \dots \| C_n \\
+& \{Q * RI_{r_1} * \dots * RI_{r_m}\} \\
+\end{aligned}
+$$
+
+^ Dorzucamy tzw. resource invarianty do każdego resourca. Co ważne, one normalnie mogą posiadać adres, wtedy możemy powiedzieć, że resource ownuje adres.

@@ -1,4 +1,4 @@
-graph TB
+graph LR
     subgraph Store
     x("x = 42")
     y("y = 32")

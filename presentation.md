@@ -32,11 +32,11 @@ $$
 & \operatorname{newvar} m:=(i+j) / 2 \\
 & \operatorname{if} i<j \operatorname{then} \\
 & \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, j)\} \\
-& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m) \wedge \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m) \land \operatorname{\textit{array}}(a, m+1, j)\} \\
 & \text{ }\text{ } \operatorname{ms}(a, i, m) \\
-& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \wedge \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \land \operatorname{\textit{array}}(a, m+1, j)\} \\
 & \text{ }\text{ } \operatorname{ms}(a, m+1, j) \\
-& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \wedge \operatorname{\textit{sorted}}(a, m+1, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \land \operatorname{\textit{sorted}}(a, m+1, j)\} \\
 & \text{ }\text{ } \operatorname{merge}(a, i, m+1, j) \\
 & \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, j)\} \\
 & \{\operatorname{\textit{sorted}}(a, i, j)\} \\
@@ -129,7 +129,7 @@ I tak samo jak w prawdziwych komputerach, double free prowadzi do segfaulta.
 $$
 \begin{aligned}
 & \operatorname{tree}(v, \tau_{1}, \tau_{2})(a) \operatorname{iff} \\
-& \text{ }\text{ } [a] = v \wedge \operatorname{tree}\tau_{1}(a+1) \wedge \operatorname{tree}\tau_{2}(a+2) \\
+& \text{ }\text{ } [a] = v \land \operatorname{tree}\tau_{1}(a+1) \land \operatorname{tree}\tau_{2}(a+2) \\
 & \operatorname{tree}(\bot)(a) \operatorname{iff} \\
 & \text{ }\text{ } a = -1 \\
 \end{aligned}
@@ -183,9 +183,9 @@ $$
 & x = \operatorname{cons}(1) \\
 & \{ x \mapsto 1 \} \\
 & y = \operatorname{cons}(2, 3) \\
-& \{ x \mapsto 1 \wedge y \mapsto 2 \wedge y + 1 \mapsto 3 \} \\
-& \{ x \mapsto 1 \wedge y \mapsto 2, 3 \} \\
-& \{ x \mapsto - \wedge y \mapsto 2, 3 \} \\
+& \{ x \mapsto 1 \land y \mapsto 2 \land y + 1 \mapsto 3 \} \\
+& \{ x \mapsto 1 \land y \mapsto 2, 3 \} \\
+& \{ x \mapsto - \land y \mapsto 2, 3 \} \\
 & \operatorname{dispose} x \\
 & \{ y \mapsto 2, 3 \} \\
 & \operatorname{dispose} y \\
@@ -201,12 +201,12 @@ $$
 \begin{aligned}
 & \{ \mathbf{true} \} \\
 & \text{left} = \operatorname{cons}(42, -1, -1) \\
-& \{ \text{left} \mapsto 42, -1, -1 \wedge \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
+& \{ \text{left} \mapsto 42, -1, -1 \land \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
 & \text{right} = \operatorname{cons}(47, -1, -1) \\
-& \{ \text{right} \mapsto 47, -1, -1 \wedge \operatorname{tree}(47, \bot, \bot)(\text{right}) \wedge \text{left} \mapsto 42, -1, -1 \wedge \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \} \\
+& \{ \text{right} \mapsto 47, -1, -1 \land \operatorname{tree}(47, \bot, \bot)(\text{right}) \land \text{left} \mapsto 42, -1, -1 \land \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \} \\
 & \text{root} = \operatorname{cons}(32, \text{left}, \text{right}) \\
-& \{ \text{right} \mapsto 32, \text{left}, \text{right} \wedge \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \wedge \text{right} \mapsto 47, -1, -1 \wedge \operatorname{tree}(47, \bot, \bot)(\text{right}) \wedge \text{left} \mapsto 42, -1, -1 \wedge \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
-& \{ \text{right} \mapsto 32, \text{left}, \text{right} \wedge \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \wedge \text{right} \mapsto 47, -1, -1 \wedge \text{left} \mapsto 42, -1, -1 \} \\
+& \{ \text{right} \mapsto 32, \text{left}, \text{right} \land \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \land \text{right} \mapsto 47, -1, -1 \land \operatorname{tree}(47, \bot, \bot)(\text{right}) \land \text{left} \mapsto 42, -1, -1 \land \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
+& \{ \text{right} \mapsto 32, \text{left}, \text{right} \land \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \land \text{right} \mapsto 47, -1, -1 \land \text{left} \mapsto 42, -1, -1 \} \\
 & \operatorname{deletetree}(\text{root}) \\
 & \{ \mathbf{emp} \} \\
 \end{aligned}
@@ -222,7 +222,7 @@ Przejdźmy teraz głębiej, do implementacji deletetree.
 $$
 \begin{aligned}
 & \operatorname{tree}(v, \tau_{1}, \tau_{2})(a) \operatorname{iff} \\
-& \text{ }\text{ } \exists_{v, t_1, t_2} a \mapsto v, t_1, t_2 \wedge \operatorname{tree}\tau_{1}t_1 \wedge \operatorname{tree}\tau_{2}t_2 \\
+& \text{ }\text{ } \exists_{v, t_1, t_2} a \mapsto v, t_1, t_2 \land \operatorname{tree}\tau_{1}t_1 \land \operatorname{tree}\tau_{2}t_2 \\
 & \operatorname{tree}(\bot)(a) \operatorname{iff} \\
 & \text{ }\text{ } a = -1 \\
 \end{aligned}
@@ -259,9 +259,9 @@ $$
 & \operatorname{procedure} \mathrm{deletetree}(a) \\ 
 & \operatorname{if} a \neq -1 \operatorname{then} \\
 & \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \operatorname{tree}(x, \tau_1, \tau_2)(a) \} \\
-& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge \operatorname{tree}(\tau_1)(t_1) \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \land \operatorname{tree}(\tau_1)(t_1) \land \operatorname{tree}(\tau_2)(t_2) \} \\
 & \text{ }\text{ } \operatorname{deletetree}([a+1]) \\
-& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \wedge \operatorname{tree}(\tau_2)(t_2) \} \\
+& \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \land \operatorname{tree}(\tau_2)(t_2) \} \\
 & \text{ }\text{ } \operatorname{deletetree}([a+2]) \\
 & \text{ }\text{ } \{ \exists_{x, \tau_1, \tau_2} \exists_{t_1, t_2} a \mapsto x, t_1, t_2 \} \\
 & \text{ }\text{ } \operatorname{dispose} a \\
@@ -352,7 +352,7 @@ $$
 & \operatorname{tree}(v, \tau_{1}, \tau_{2})(a) \operatorname{iff} \\
 & \text{ }\text{ } \exists_{v, t_1, t_2} a \mapsto v, t_1, t_2 * \operatorname{tree}\tau_{1}t_1 * \operatorname{tree}\tau_{2}t_2 \\
 & \operatorname{tree}(\bot)(a) \operatorname{iff} \\
-& \text{ }\text{ } \mathbf{emp} \wedge a = -1 \\
+& \text{ }\text{ } \mathbf{emp} \land a = -1 \\
 \end{aligned}
 $$
 
@@ -418,7 +418,7 @@ $$
 $$
 when
 $$
-v_{1}, \ldots, v_{n} \in FV(p, c, q) \wedge \forall_i \operatorname{modified}_{c}(v_{i}) \implies \operatorname{variable}(e_{i}) \wedge \forall_{j \neq i} e_{i} \notin \operatorname{FV}(e_{j})
+v_{1}, \ldots, v_{n} \in FV(p, c, q) \land \forall_i \operatorname{modified}_{c}(v_{i}) \implies \operatorname{variable}(e_{i}) \land \forall_{j \neq i} e_{i} \notin \operatorname{FV}(e_{j})
 $$
 
 ---
@@ -498,15 +498,20 @@ Tu przykład zrealizowania mutual exlusion groups używając semaforów.
 
 $$
 \begin{aligned}
-& \operatorname{with} r \operatorname{when} B \operatorname{do} C \\
+& \operatorname{\mathbf{with}} r \operatorname{\mathbf{when}} B \operatorname{\mathbf{do}} C \operatorname{\mathbf{endwith}} \\
 & r - Resource \\
 & B - Boolean \\
 & C - Command \\
 \end{aligned}
 $$
 
+$$
+P(s) = \operatorname{\mathbf{with}} s \operatorname{\mathbf{when}} s > 0 \operatorname{\mathbf{do}} s := s - 1 \operatorname{\mathbf{endwith}}
+$$
+
 ^ My oprzemy się głównie na innym prymitywie synchronizacji, bloku with-when-do.
 Z których tylko jeden jednocześnie może mieć with'a na danym resoursie, i tylko wtedy kiedy B jest spełnione.
+Poniżej jak możemy zaimplementować podniesienie semaforu.
 
 ---
 
@@ -641,11 +646,11 @@ $$
 & \operatorname{newvar} m:=(i+j) / 2 \\
 & \operatorname{if} i<j \operatorname{then} \\
 & \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, j)\} \\
-& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m) \wedge \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m) \land \operatorname{\textit{array}}(a, m+1, j)\} \\
 & \text{ }\text{ } \operatorname{ms}(a, i, m) \\
-& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \wedge \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \land \operatorname{\textit{array}}(a, m+1, j)\} \\
 & \text{ }\text{ } \operatorname{ms}(a, m+1, j) \\
-& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \wedge \operatorname{\textit{sorted}}(a, m+1, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \land \operatorname{\textit{sorted}}(a, m+1, j)\} \\
 & \text{ }\text{ } \operatorname{merge}(a, i, m+1, j) \\
 & \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, j)\} \\
 & \{\operatorname{\textit{sorted}}(a, i, j)\} \\
@@ -715,7 +720,9 @@ Teraz dopakujemy te resourcy zmiennymi składowymi, i będziemy rozważać bardz
 
 ---
 
-# Program - Proof Form
+# Concurrent Program - New Proof Form
+
+$$RI$$ - Resource Invariant
 
 $$
 \begin{aligned}
@@ -729,3 +736,202 @@ $$
 $$
 
 ^ Dorzucamy tzw. resource invarianty do każdego resourca. Co ważne, one normalnie mogą posiadać adres, wtedy możemy powiedzieć, że resource ownuje adres.
+
+---
+
+# Getting Back to Semaphore Message Sending
+
+$$
+\begin{aligned}
+& \operatorname{\mathbf{semaphore}} free := 1 ; busy := 0 \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& [10] := m; & \| & & & n := [10]; \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Wróćmy do naszego daring przykładu z przesyłaniem wiadomości poprzez blokowanie i zwalnianie semafor.
+
+---
+
+# Message Sending - Rewrite Definitions
+
+$$
+\begin{aligned}
+& free := 1, busy := 0; \\
+& \operatorname{\mathbf{resource}} free(free), busy(busy); \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& [10] := m; & \| & & & n := [10]; \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Przemieńmy deklaracje resourców na nowe.
+
+---
+
+# Message Sending - Add Definitions
+
+$$
+\begin{aligned}
+& \{ 10 \mapsto - \} \\
+& free := 1, busy := 0; \\
+& \{ (free = 1 \land 10 \mapsto -) * (busy = 0 \land \mathbf{emp}) \} \\
+& \{ RI_{free} * RI_{busy} * \mathbf{emp} * \mathbf{emp} \} \\
+& \operatorname{\mathbf{resource}} free(free), busy(busy); \\
+& \{ \mathbf{emp} * \mathbf{emp} \} \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& [10] := m; & \| & & & n := [10]; \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Dodajmy warunki.
+Tzn. dodajemy pewne (niezdefiniowane jeszcze) Resource Invariants, przed uruchomieniem procesów "przekazujemy" te invarianty resourcom i zostajemy z emp'ami dla procesów.
+
+---
+
+# Message Sending - Resource Invariants
+
+$$
+RI_s = (s = 0 \land emp) \lor (s = 1 \land 10 \mapsto –)
+$$
+
+$$
+\begin{aligned}
+& \{ 10 \mapsto - \} \\
+& free := 1, busy := 0; \\
+& \{ (free = 1 \land 10 \mapsto -) * (busy = 0 \land \mathbf{emp}) \} \\
+& \{ RI_{free} * RI_{busy} * \mathbf{emp} * \mathbf{emp} \} \\
+& \operatorname{\mathbf{resource}} free(free), busy(busy); \\
+& \{ \mathbf{emp} * \mathbf{emp} \} \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& [10] := m; & \| & & & n := [10]; \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Definiujemy invarianty. Opisują one dobrze kiedy semafora coś posiada, a kiedy nie.
+
+---
+
+# Resource Invariant Deep Dive
+
+The command C has access to $$RI_{r}$$
+
+$$
+\frac{\left\{\left(P * R I_{r}\right) \land B\right\} C\left\{Q * R I_{r}\right\}}{\{P\} \operatorname{\mathbf { with }} r \operatorname{\mathbf { when }} B \operatorname{\mathbf { do }} C \operatorname{\mathbf { endwith }\{}Q\}}
+$$
+
+^ Co tu jest ważne? Że w "with" bloku komenda "przejmuje" resource invariant
+
+---
+
+# Resource Invariant Deep Dive - P(free)
+
+$$
+RI_s = (s = 0 \land emp) \lor (s = 1 \land 10 \mapsto –)
+$$
+
+$$
+P(free) = \operatorname{\mathbf{with}} free \operatorname{\mathbf{when}} free > 0 \operatorname{\mathbf{do}} free := free - 1 \operatorname{\mathbf{endwith}}
+$$
+
+$$
+\begin{aligned}
+& \{(P * RI_{free}) \land B\} \\
+& \{(\mathbf{emp} *(( free=0 \land \mathbf{emp}) \lor( free=1 \land 10 \mapsto-))) \land  free>0\} \\
+& \{ free=1 \land 10 \mapsto-\} \\
+&  free:= free-1 \\
+& \{ free=0 \land 10 \mapsto-\} \\
+& \{10 \mapsto-*( free=0 \land \mathbf{emp})\} \\
+& \{10 \mapsto-*(( free=0 \land \mathbf{emp}) \lor( free=1 \land 10 \mapsto-))\} \\
+& \{Q * RI_{free}\} \\
+\end{aligned}
+$$
+
+^ Tutaj krok po kroku widzimy jak wygląda body brania semafory i przekaz własności.
+Zostawiamy semafore z wartością 0 i bez dziesiątki.
+
+---
+
+# Resource Invariant Deep Dive - V(free)
+
+$$
+RI_s = (s = 0 \land emp) \lor (s = 1 \land 10 \mapsto –)
+$$
+
+$$
+V(free) = \operatorname{\mathbf{with}} free \operatorname{\mathbf{when}} \mathbf{true} \operatorname{\mathbf{do}} free := free + 1 \operatorname{\mathbf{endwith}}
+$$
+
+$$
+\begin{aligned}
+& \{(P * RI_{free}) \land B\} \\
+& \{10 \mapsto-*((free=0 \land \text { emp }) \lor ( free=1 \land 10 \mapsto-))\} \\
+& \{10 \mapsto-*( free=0 \land \text { emp })\} \\
+&  free:= free+1 \\
+& \{10 \mapsto-*( free=1 \land \text { emp })\} \\
+& \{\text { emp } *( free=1 \land 10 \mapsto-)\} \\
+& \{\text { emp } *(( free=0 \land \text { emp }) \lor ( free=1 \land 10 \mapsto-))\} \\
+& \{Q * RI_{free}\} \\
+\end{aligned}
+$$
+
+^ Tutaj krok po kroku widzimy jak wygląda body opuszczania semafory i przekaz własności.
+Zostawiamy semafore z wartością 1 i z dziesiątką.
+
+---
+
+# Message Sending
+
+$$
+RI_s = (s = 0 \land emp) \lor (s = 1 \land 10 \mapsto –)
+$$
+
+$$
+\begin{aligned}
+& \{ 10 \mapsto - \} \\
+& free := 1, busy := 0; \\
+& \{ (free = 1 \land 10 \mapsto -) * (busy = 0 \land \mathbf{emp}) \} \\
+& \{ RI_{free} * RI_{busy} * \mathbf{emp} * \mathbf{emp} \} \\
+& \operatorname{\mathbf{resource}} free(free), busy(busy); \\
+& \{ \mathbf{emp} * \mathbf{emp} \} \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{P}(free); & & & & \operatorname{P}(busy); \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& [10] := m; & \| & & & n := [10]; \\
+& \{ 10 \mapsto - \} & & & & \{ 10 \mapsto - \} \\
+& \operatorname{V}(busy); & & & & \operatorname{V}(free); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+^ Tu jeszcze raz możemy w praktyce zobaczyć, co się stało.
+Lewy proces będąc w while'u mógłby znów wyjąć z free wskaźnik, znów do niego coś włożyć i znów przekazać prawemu.

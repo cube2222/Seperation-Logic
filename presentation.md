@@ -506,7 +506,10 @@ $$
 $$
 
 $$
-P(s) = \operatorname{\mathbf{with}} s \operatorname{\mathbf{when}} s > 0 \operatorname{\mathbf{do}} s := s - 1 \operatorname{\mathbf{endwith}}
+\begin{aligned}
+& P(s) = \operatorname{\mathbf{with}} s \operatorname{\mathbf{when}} s > 0 \operatorname{\mathbf{do}} s := s - 1 \operatorname{\mathbf{endwith}} \\
+& V(s) = \operatorname{\mathbf{with}} s \operatorname{\mathbf{when}} \mathbf{true} \operatorname{\mathbf{do}} s := s + 1 \operatorname{\mathbf{endwith}} \\
+\end{aligned}
 $$
 
 ^ My oprzemy się głównie na innym prymitywie synchronizacji, bloku with-when-do.

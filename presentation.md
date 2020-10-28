@@ -629,3 +629,63 @@ $$
 $$
 
 ^ To ma sens. Oba, C i C' posiadają swoje adresy, więc operują na róznych. Także można je opisać separującą koniunkcją. 
+
+---
+
+# Getting back to Mergesort
+
+$$
+\begin{aligned}
+& \{\operatorname{\textit{array}}(a, i, j)\} \\
+& \operatorname{procedure} \mathrm{ms}(a, i, j) \\ 
+& \operatorname{newvar} m:=(i+j) / 2 \\
+& \operatorname{if} i<j \operatorname{then} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m) \wedge \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \operatorname{ms}(a, i, m) \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \wedge \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \operatorname{ms}(a, m+1, j) \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) \wedge \operatorname{\textit{sorted}}(a, m+1, j)\} \\
+& \text{ }\text{ } \operatorname{merge}(a, i, m+1, j) \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, j)\} \\
+& \{\operatorname{\textit{sorted}}(a, i, j)\} \\
+\end{aligned}
+$$
+
+^ Przypomnijmy sobie nasz mergesort.
+Teraz przekształćmy go w wersję współbieżną.
+
+---
+
+# Concurrent Mergesort - Array Definition
+
+$$
+array(x,i,j) := \forall_{k} i \leq k \leq j \implies a + k \mapsto - * \mathbf{true}
+$$
+
+^ Czyli teraz asercja arraya posiada adresy od a+i do a+j.
+Będziemy dzielić tablicę między wiele wątków, stąd musieliśmy zmienić tą definicję.
+
+---
+
+# Concurrent Mergesort
+
+$$
+\begin{aligned}
+& \{\operatorname{\textit{array}}(a, i, j)\} \\
+& \operatorname{procedure} \mathrm{ms}(a, i, j) \\ 
+& \operatorname{newvar} m:=(i+j) / 2 \\
+& \operatorname{if} i<j \operatorname{then} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, j)\} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m) * \operatorname{\textit{array}}(a, m+1, j)\} \\
+& \begin{aligned} \\
+& \text{ }\text{ } \{\operatorname{\textit{array}}(a, i, m)\} & & & & \{\operatorname{\textit{array}}(a, m+1, j)\} \\
+& \text{ }\text{ } \operatorname{ms}(a, i, m); & \| & & & \operatorname{ms}(a, m+1, j); \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m)\} & & & & \{\operatorname{\textit{sorted}}(a, m+1, j)\} \\
+& \end{aligned} \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, m) * \operatorname{\textit{sorted}}(a, m+1, j)\} \\
+& \text{ }\text{ } \operatorname{merge}(a, i, m+1, j) \\
+& \text{ }\text{ } \{\operatorname{\textit{sorted}}(a, i, j)\} \\
+& \{\operatorname{\textit{sorted}}(a, i, j)\} \\
+\end{aligned}
+$$

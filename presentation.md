@@ -1,12 +1,18 @@
 ---
 
+[.footer: Gist: Hey, I'm a footer. If you didn't hear a part of what was said and don't understand a slide, I should be there to state the main point of it.]
+
+---
+
 # Separation Logic
+
+^ Autorem tego papieru jest John C. Reynolds. Stawia podstawy do tego co później zostało nagrodzone nagrodą Goedla. The Gödel Prize is an annual prize for outstanding papers in the area of theoretical computer science.
 
 ---
 
 # Short Recap of Hoare Logic
 
-^ Ale najpierw przypomnijmy sobie trochę logikę Hoara.
+^ Ale najpierw przypomnijmy sobie trochę logikę Hoara, która służy do dowodzenia poprawności sekwencyjnych programów bez wskaźników, czyli z samymi rejestrami jako wartości.
 
 ---
 
@@ -44,6 +50,7 @@ $$
 $$
 
 ^ Ze spełniającą reasonable wymagania mergem, mamy poprawny program.
+Funkcja jest rekurencyjna, więc możemy o rekurencyjnych wywołaniach czynić te założenia, które próbujemy udowodnić dla funkcji.
 
 ---
 
@@ -93,6 +100,8 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: We're adding a layer of indirection.]
+
 ^ W praktyce nie będziemy tego zgłębiać, więc po prostu wszędzie są liczby całkowite.
 
 ---
@@ -109,9 +118,11 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: Commands to manipulate the heap.]
+
 ^ Rozszczerzymy też nasz język o potrzebne konstrukty. tzw. Komendy.
-Tu warto zwrócić uwagę, że albo odczytujemy, albo zapisujemy do pamięci, nie możemy zrobić przepisania z pamięci do pamięci.
-Trochę jak w assemblerze.
+Tu warto zwrócić uwagę, że albo odczytujemy, albo zapisujemy do pamięci, nie możemy zrobić przepisania z pamięci do pamięci. Trochę jak w assemblerze.
+Czyli kwadratowy nawias nie może być po obu stronach przypisania jednocześnie.
 I tak samo jak w prawdziwych komputerach, double free prowadzi do segfaulta.
 
 ---
@@ -135,6 +146,8 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: Describing an address which contains a tree.]
+
 ^ Ale co to znaczy "być drzewem"? Pomóc może tutaj oczywiście lektura "Sekretne życie drzew", ale w skrócie:
 
 ---
@@ -155,6 +168,8 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: Can't assert memory deallocation.]
+
 ^ To zobaczmy sobie teraz przykład konstrukcji i użycia.
 Tu mamy problem.
 Nie mamy jak dać warunku na skuteczne usunięcie drzewa...
@@ -170,6 +185,8 @@ $$
 &\mid\langle\exp \rangle \mapsto\langle\exp \rangle & \text { singleton heap } \\
 \end{aligned}
 $$
+
+[.footer: Gist: Assertions to describe the state of the heap.]
 
 ^ Wprowadźmy też predykaty operujące na stanie Heapu, tzw. asercje.
 
@@ -205,8 +222,8 @@ $$
 & \text{right} = \operatorname{cons}(47, -1, -1) \\
 & \{ \text{right} \mapsto 47, -1, -1 \land \operatorname{tree}(47, \bot, \bot)(\text{right}) \land \text{left} \mapsto 42, -1, -1 \land \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \} \\
 & \text{root} = \operatorname{cons}(32, \text{left}, \text{right}) \\
-& \{ \text{right} \mapsto 32, \text{left}, \text{right} \land \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \land \text{right} \mapsto 47, -1, -1 \land \operatorname{tree}(47, \bot, \bot)(\text{right}) \land \text{left} \mapsto 42, -1, -1 \land \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
-& \{ \text{right} \mapsto 32, \text{left}, \text{right} \land \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \land \text{right} \mapsto 47, -1, -1 \land \text{left} \mapsto 42, -1, -1 \} \\
+& \{ \text{root} \mapsto 32, \text{left}, \text{right} \land \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \land \text{right} \mapsto 47, -1, -1 \land \operatorname{tree}(47, \bot, \bot)(\text{right}) \land \text{left} \mapsto 42, -1, -1 \land \operatorname{tree}(42, \bot, \bot)(\text{left}) \} \\
+& \{ \text{root} \mapsto 32, \text{left}, \text{right} \land \operatorname{tree}(32, (42, \bot, \bot), (47, \bot, \bot))(\text{root}) \land \text{right} \mapsto 47, -1, -1 \land \text{left} \mapsto 42, -1, -1 \} \\
 & \operatorname{deletetree}(\text{root}) \\
 & \{ \mathbf{emp} \} \\
 \end{aligned}
@@ -279,6 +296,8 @@ $$
 
 ![inline 125%](tree_counterexample.png)
 
+[.footer: Gist: Same node freed in two branches.]
+
 ^ Otóż nigdzie nie sprawdzamy ani nie obsługujemy sytuacji, w której różne gałęzie drzewa wskazują na te same miejsca w Heapie.
 Śmiało zrobimy double free.
 Nigdzie nie rozgraniczamy pamięci, więc różne części naszych predukatów mogą operować na tej samej pamięci.
@@ -295,6 +314,8 @@ $$
 &\mid\langle\text{assert}\rangle * \langle\text{assert}\rangle & \text { separating conjunction } \\
 \end{aligned}
 $$
+
+[.footer: Gist: Add assertions to describe non-overlapping parts of the heap.]
 
 ^ Wobec tego musimy dodać kolejne asercje, które są główną ideą i głębszym sensem Separation Logic.
 Idea jest taka, że asercje oddzielona separating conjunction opisują różne elementy pamięci.
@@ -326,7 +347,7 @@ $$
 
 ---
 
-# Seperating Conjunction - WRONG Example
+# Seperating Conjunction - Non-Example
 
 ![inline 125%](separating_conjunction_example_3.png)
 
@@ -356,6 +377,8 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: Use separating conjunction to assert branches use disjoint parts of the heap.]
+
 ^ Zastępujemy koniunkcję przez Seperating Conjunction. I to pokazuje całą ideę Separation Logic.
 Rozdzielamy asercje tak żeby operowały na różnych elementach pamięci.
 Tu warto sobie uświadomić, że (tree tau t) rozwija się do asercji, która ma po lewych stronach strzałek wszystkie adresy wskazujące na węzły-dzieci, więc asertuje ich obecność.
@@ -381,6 +404,8 @@ $$
 & \{ \mathbf{emp} \} \\
 \end{aligned}
 $$
+
+[.footer: Gist: Using **emp** to describe deletion correctness.]
 
 ^ W końcu możemy poprawnie udowodnić deletetree. Nasz wcześniejszy kontrprzykład nie może się wydarzyć, bo adres nie może być użyty w dwóch poddrzewach, jako że są one rozdzielone separating conjunction.
 
@@ -424,6 +449,10 @@ $$
 ---
 
 # End of Part 1
+
+[.footer: Gist: Time to ask questions.]
+
+^ Tutaj warto powiedzieć, że główne osiągnięcie tej pierwszej części to stworzenie logiki która jest sound. Czyli każdy poprawny dowód to faktycznie poprawny semantycznie program.
 
 ---
 
@@ -512,6 +541,8 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: Implementing semaphores in terms of **with when do endwith** blocks.]
+
 ^ My oprzemy się głównie na innym prymitywie synchronizacji, bloku with-when-do.
 Z których tylko jeden jednocześnie może mieć with'a na danym resoursie, i tylko wtedy kiedy B jest spełnione.
 Poniżej jak możemy zaimplementować podniesienie semaforu.
@@ -540,6 +571,8 @@ $$
 & \end{aligned}
 \end{aligned}
 $$
+
+[.footer: Gist: Accessing *m* without a mutual exclusion group.]
 
 ^ Warto też zwrócić uwage, że nie jest łatwo wykryć np. kompilatorem co jest grupą wzajemnego wykluczenia,
 bo np. P i V na różnych semaforach nie muszą tworzyć bloków, tak jak wcześniej.
@@ -604,6 +637,8 @@ $$
 \end{aligned}
 $$
 
+[.footer: Gist: Ownership flows in and out of the semaphores.]
+
 ^ Idea jest żeby ownership się układał w ten sposób.
 Wyciągamy ownership z semafory, zmieniamy i zwracamy do drugiej semafory.
 Z niej wyciąga to drugi proces i operuje na tym, ostatecznie zwracając do pierwszej.
@@ -621,12 +656,16 @@ $$
 and
 
 $$
-\{P\}[10] := 42\{Q\} \implies 10 \mapsto – * \operatorname{true}
+\begin{aligned}
+\{P\}[10] := 42\{Q\} \\
+P \implies 10 \mapsto – * \operatorname{true} \\
+\end{aligned}
 $$
 
 ^ Małe przypomnienie.
 Pierwsze znaczy, że możemy rozdzielić Heap na dwie części, z których jedna spełnia P, a druga Q.
 W drugim ważne jest, że jeśli komenda modyfikuje adres 10, to P musi być implikować poprawność tego adresu, że jest on zaalokowany.
+Tu ważne jest, że gwiazdka separuje 10 -> - i true.
 
 ---
 
@@ -635,6 +674,8 @@ W drugim ważne jest, że jeśli komenda modyfikuje adres 10, to P musi być imp
 $$
 \frac{\{P\} C\{Q\} \quad\left\{P^{\prime}\right\} C^{\prime}\left\{Q^{\prime}\right\}}{\left\{P * P^{\prime}\right\} C \| C^{\prime}\left\{Q * Q^{\prime}\right\}}
 $$
+
+[.footer: Gist: Two non-interfering processes should be able to run concurrently.]
 
 ^ To ma sens. Oba, C i C' posiadają swoje adresy, więc operują na róznych. Także można je opisać separującą koniunkcją. 
 
@@ -668,7 +709,7 @@ Teraz przekształćmy go w wersję współbieżną.
 # Concurrent Mergesort - Array Definition
 
 $$
-array(x,i,j) := \forall_{k} i \leq k \leq j \implies a + k \mapsto - * \mathbf{true}
+array(a,i,j) := \forall_{k} i \leq k \leq j \implies a + k \mapsto - * \mathbf{true}
 $$
 
 ^ Czyli teraz asercja arraya posiada adresy od a+i do a+j.
@@ -780,6 +821,8 @@ $$
 & \end{aligned}
 \end{aligned}
 $$
+
+[.footer: Gist: We changed semaphores to resources.]
 
 ^ Przemieńmy deklaracje resourców na nowe.
 
@@ -938,3 +981,12 @@ $$
 
 ^ Tu jeszcze raz możemy w praktyce zobaczyć, co się stało.
 Lewy proces będąc w while'u mógłby znów wyjąć z free wskaźnik, znów do niego coś włożyć i znów przekazać prawemu.
+
+---
+
+# End of Part 2
+
+[.footer: Gist: Time to ask questions.]
+
+^ Tutaj warto powiedzieć, że główne osiągnięcie tej pierwszej części to stworzenie systemu który jest modularny. Możemy udowadniać zachowania naszych programów koncentrując się na aktualnej funkcji i procesie.
+Autorami tych dwóch papierów ("Resources, Concurrency and Local Reasoning" i "A semantics for concurrent separation logic") są Peter W. O’Hearn i Stephen Brookes.

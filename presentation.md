@@ -984,6 +984,100 @@ Lewy proces będąc w while'u mógłby znów wyjąć z free wskaźnik, znów do 
 
 ---
 
+# Memory Manager
+
+$$
+\begin{aligned}
+&\operatorname { alloc }(x, a, b) \triangleq \operatorname{\mathbf{with}} mm \operatorname{\mathbf{when}} \operatorname{\mathbf{true}} \operatorname{\mathbf{do}} \\
+& \text{ }\text{ }\text{ }\text{ } \operatorname{\mathbf{if}} f=\mathrm{nil} \operatorname{\mathbf{then}} x:=\operatorname{cons}(a, b) \\
+& \text{ }\text{ }\text{ }\text{ } \operatorname{\mathbf{else}} x:=f ; f:=x .2 ; x .1:=a ; x .2:=b
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+&\operatorname { dealloc }(y) \triangleq \operatorname{\mathbf{with}} mm \operatorname{\mathbf{when}} \operatorname{\mathbf{true}} \operatorname{\mathbf{do}} \\
+& \text{ }\text{ }\text{ }\text{ } y.2:=f \\
+& \text{ }\text{ }\text{ }\text{ } f:=y \\
+\end{aligned}
+$$
+
+^ Spójrzmy na jeszcze jeden przykład użycia. Wspomniany wcześniej memory manager, czyli alloc i free.
+Używają listy par a, b zdealokowanych, tak żeby znów ich użyć w przyszłej alokacji.
+
+---
+
+# Memory Manager - alloc
+
+$$
+\begin{aligned}
+& \{\mathbf{emp}\}\operatorname{alloc}(x,a,b)\{x \mapsto a, b\}: \\
+& \{\mathbf{emp} * \operatorname{\mathit{list}} f\} \\
+& \{\operatorname{\mathit{list}} f\} \\
+& \text{ }\text{ } \operatorname{\mathbf{if}} f=\mathrm{nil} \operatorname{\mathbf{then}} \\
+& \text{ }\text{ }\text{ }\text{ } \{\operatorname{\mathit{list}} f \land f = nil\} \\
+& \text{ }\text{ }\text{ }\text{ } \{f = nil \land \mathbf{emp}\} \\
+& \text{ }\text{ }\text{ }\text{ } x:=\operatorname{cons}(a, b) \\
+& \text{ }\text{ }\text{ }\text{ } \{(x \mapsto a, b) * (f = nil \land \mathbf{emp})\} \\
+& \text{ }\text{ }\text{ }\text{ } \{(x \mapsto a, b) * \operatorname{\mathit{list}} f\} \\
+& \text{ }\text{ } \operatorname{\mathbf{else}} \\
+& \text{ }\text{ }\text{ }\text{ } \{\operatorname{\mathit{list}} f \land f \neq nil\} \\
+& \text{ }\text{ }\text{ }\text{ } \{\exists_{y} f \mapsto -, y * \operatorname{\mathit{list}} y\} \\
+& \text{ }\text{ }\text{ }\text{ } x:=f ; f:=x .2 ; x .1:=a ; x .2:=b \\
+& \text{ }\text{ }\text{ }\text{ } \{(x \mapsto a, b) * \operatorname{\mathit{list}} f\} \\
+& \{(x \mapsto a, b) * \operatorname{\mathit{list}} f\} \\
+\end{aligned}
+$$
+
+[.footer: Gist: Correctness of alloc. It uses a list f to store deallocated memory nodes.]
+
+^ Przypomnijmy, że list f wyciągamy z resourca mm blokiem with, dlatego mamy dostęp dotego predykatu..
+
+---
+
+# Memory Manager - dealloc
+
+$$
+\begin{aligned}
+& \{y \mapsto -, -\}\operatorname{dealloc}(y)\{\mathbf{emp}\}: \\
+& \{y \mapsto -, - * \operatorname{\mathit{list}} f\} \\
+& y.2 := f; \\
+& f := y; \\
+& \{\operatorname{\mathit{list}} f\} \\
+& \{\mathbf{emp} * \operatorname{\mathit{list}} f\} \\
+\end{aligned}
+$$
+
+[.footer: Gist: Correctness of dealloc. It uses a list f to store deallocated memory nodes.]
+
+---
+
+# Memory Manager - usage
+
+$$
+\begin{aligned}
+& \{ \mathbf{emp} * \mathbf{emp} \} \\
+& \begin{aligned}
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \operatorname{alloc}(x,a,b); & & & & \operatorname{alloc}(y, a', b'); \\
+& \{ x \mapsto a, b \} & & & & \{ y \mapsto a', b' \} \\
+& x.1 := 4; & \| & & & y.1 := y; \\
+& \{ x \mapsto 4, b \} & & & & \{ y \mapsto 7, b' \} \\
+& \operatorname{dealloc}(x); & & & & \operatorname{dealloc}(y); \\
+& \{\mathbf{emp}\} & & & & \{\mathbf{emp}\} \\
+& \{ \mathbf{emp} * \mathbf{emp} \} \\
+& \{ \mathbf{emp} \} \\
+& \end{aligned}
+\end{aligned}
+$$
+
+[.footer: Gist: Allocation can reuse memory deallocated by the other process and use it with no limits. A process could use memory after deallocation. This is daring, but provably correct.]
+
+^ W zależności od przeplotu jeden proces może z alokacji otrzymać adres zwrócony przez drugi i używać go bez ograniczeń. To jest przykład daring programu, bo pierwszy mógłby zachować zmienną z tym adresem i odnieść się do oddanej pamięci.
+Nasze zasady wnioskowania nie pozwalają na udowodnienie niepoprawnego w ten sposób kodu, poprzez asercję emp.
+
+---
+
 # End of Part 2
 
 [.footer: Gist: Time to ask questions.]

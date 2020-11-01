@@ -1084,3 +1084,14 @@ Nasze zasady wnioskowania nie pozwalają na udowodnienie niepoprawnego w ten spo
 
 ^ Tutaj warto powiedzieć, że główne osiągnięcie tej pierwszej części to stworzenie systemu który jest modularny. Możemy udowadniać zachowania naszych programów koncentrując się na aktualnej funkcji i procesie.
 Autorami tych dwóch papierów ("Resources, Concurrency and Local Reasoning" i "A semantics for concurrent separation logic") są Peter W. O’Hearn i Stephen Brookes.
+
+---
+
+# Papers
+
+- Separation Logic: A Logic for Shared Mutable Data Structures
+    - John C. Reynolds
+- Resources, Concurrency and Local Reasoning
+    - Peter W. O’Hearn
+- A semantics for concurrent separation logic
+    - Stephen Brookes

@@ -981,6 +981,7 @@ $$
 
 ^ Tu jeszcze raz możemy w praktyce zobaczyć, co się stało.
 Lewy proces będąc w while'u mógłby znów wyjąć z free wskaźnik, znów do niego coś włożyć i znów przekazać prawemu.
+Tu warto zauważyć, że nie musieliśmy mieć globalnego predykatu, który opisuje zależność między oboma semaforami, możemy o nich rozumować lokalnie.
 
 ---
 
@@ -1083,6 +1084,7 @@ Nasze zasady wnioskowania nie pozwalają na udowodnienie niepoprawnego w ten spo
 [.footer: Gist: Time to ask questions.]
 
 ^ Tutaj warto powiedzieć, że główne osiągnięcie tej pierwszej części to stworzenie systemu który jest modularny. Możemy udowadniać zachowania naszych programów koncentrując się na aktualnej funkcji i procesie.
+Co więcej, rozwiązania bazujące na tym zostały z sukcesem zaimplementowane.
 Autorami tych dwóch papierów ("Resources, Concurrency and Local Reasoning" i "A semantics for concurrent separation logic") są Peter W. O’Hearn i Stephen Brookes.
 
 ---
